@@ -7,6 +7,7 @@ function App() {
     <div className="App">
       <h1>XD</h1>
       <h2>XD</h2>
+      <h2>XD</h2>
     </div>
   );
 }
