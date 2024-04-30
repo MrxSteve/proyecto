@@ -1,15 +1,12 @@
+import { AppWrapper } from './components/wrappers';
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <h1>XD</h1>
-      <h2>XD</h2>
-      <h2>XD</h2>
-    </div>
+    <AppWrapper> 
+      <div>hola</div>
+    </AppWrapper>
   );
 }
 
-export default App;
+export default React.memo(App);
