@@ -1,10 +1,13 @@
+import Game from './components/game';
 import { AppWrapper } from './components/wrappers';
 import React from 'react';
 
 const App = () => {
   return (
     <AppWrapper> 
-      <div>hola</div>
+      <div>
+        <Game></Game>
+      </div>
     </AppWrapper>
   );
 }

@@ -27,3 +27,4 @@ const resizeScreen = debounce(() => {
 }, 100);
 
 export default resizeScreen;
+

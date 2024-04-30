@@ -8,7 +8,7 @@
   
   .screen {
     align-items: center;
-    background-color: var(--bg-bright-sky-blue);
+    background-color: var(--principal);
     display: flex;
     height: var(--base-height);
     justify-content: center;
