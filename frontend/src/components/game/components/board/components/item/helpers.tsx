@@ -1,6 +1,7 @@
 import type { CategoriesType } from "../../../../../../interfaces";
 import Icon from "../../../icon";
 
+// Renderizando iconos y texto
 export const LOWER_SECTION_OPTIONS: Record<
   CategoriesType,
   JSX.Element | string

@@ -2,6 +2,7 @@ import "./styles.css"
 import React from "react";
 import type { CategoriesType, ItemType, valueDice } from "../../../../../../interfaces";
 import { LOWER_SECTION_OPTIONS } from "./helpers";
+import { EItemType } from "../../../../../../utils/constants";
 //import { EItemType } from "../../../../../../utils/constants";
 
 interface ItemProps {
@@ -14,17 +15,17 @@ interface ItemProps {
 const Item = ({
     label = "",
     size = 50,
-    type = "UPPER_SECTION", //EItemType.UPPER_SECTION
+    type = EItemType.UPPER_SECTION,
     value = 1,
 }: ItemProps) => (
     <div
     className={`board-item ${type.toLowerCase()} ${
-        type === "UPPER_SECTION" ? `dice-${value}` : ""
-      }`}       //EItemType.UPPER_SECTION
+        type === EItemType.UPPER_SECTION ? `dice-${value}` : ""
+      }`}       
     style={{width: size, height: size}} // le pasamos el valor del size arriba
     title={label || value.toString()}
     >
-        {type === "LOWER_SECTION" && 
+        {type === EItemType.LOWER_SECTION && 
         LOWER_SECTION_OPTIONS [value as CategoriesType]}
     </div>
     );
