@@ -87,8 +87,8 @@
 .board-panel-row-score-button.used,
 .board-panel-row-score-button.selected,
 .board-panel-row-score-button.used-score {
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
-    rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  box-shadow: rgba(255, 108, 255, 0.3) 0px 1px 2px 0px,
+    rgba(227, 86, 255, 0.15) 0px 1px 3px 1px;
 }
 
 .board-panel-row-score-button span {

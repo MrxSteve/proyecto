@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { BoardItem } from "./components/board/components";
 import { DiceState, DiceTheme, IBoardItem, ItemSelectedBoard, TotalPlayers, TypeButtonGame, type TypeGame, type valueDice } from "../../interfaces";
-import {Board, Buttons, Dices, GameWrapper, Header} from "./components";
-import { calculateBoardValues, deselectBoardItemBoard, getInitalBoardState, getInitialDiceValues, getInitialPlayers, rollDice, selectDice, selectItemBoard, totalDiceAvailable } from "./helpers";
+import {Board, Buttons, Dices, GameWrapper, Header, ScoreGame} from "./components";
+import { calculateBoardValues, calculateScore, deselectBoardItemBoard, getInitalBoardState, getInitialDiceValues, getInitialPlayers, rollDice, selectDice, selectItemBoard, totalDiceAvailable } from './helpers';
 import { EDiceState, EDiceTheme, ETypeButtonGame, ETypeGame, INITIAL_ITEM_SELECTED, TOTAL_THROWING } from '../../utils/constants';
 import board from "./components/board";
 
@@ -17,11 +17,10 @@ const Game = ({typeGame = ETypeGame.FRIEND, initialTurn=1}: GameProps) => {
     const [boardState, setBoardState] = useState(getInitalBoardState);
 
     // Estado de los jugadores (maximo seran dos)
-    // setPlayers
-    const [players] = useState(()=> getInitialPlayers(typeGame));
+    const [players, setPlayers] = useState(()=> getInitialPlayers(typeGame));
 
-    //Para el turno setTurn
-    const [turn] = useState<TotalPlayers>(typeGame !== ETypeGame.SOLO ? initialTurn: 1);
+    //Para el turno
+    const [turn, setTurn] = useState<TotalPlayers>(typeGame !== ETypeGame.SOLO ? initialTurn: 1);
 
     //Estado de los dados
     const [diceValues, setDiceValues] = useState(() => getInitialDiceValues());
@@ -39,8 +38,8 @@ const Game = ({typeGame = ETypeGame.FRIEND, initialTurn=1}: GameProps) => {
     const [itemSelected, setItemSelected] = useState<ItemSelectedBoard>(
         INITIAL_ITEM_SELECTED
     );
-  // Estado para saber si el juego ha terminado
-  const [gamerOver, setGamerOver] = useState(false);
+    // Estado para saber si el juego ha terminado
+    const [gamerOver, setGamerOver] = useState(false);
 
     /**
     * Evento que se ejecuta una vez ha terminado de girar los dados
@@ -85,6 +84,38 @@ const Game = ({typeGame = ETypeGame.FRIEND, initialTurn=1}: GameProps) => {
             setDieSate(EDiceState.SPIN);
             setThrowing((value) => value - 1);
         }
+
+        if (type === ETypeButtonGame.PLAY) {
+            const {copyBoardState, copyPlayers, isGameOver} = calculateScore(
+                boardState,
+                itemSelected,
+                players,
+                turn,
+                typeGame,
+                isYatzy
+            );
+
+            setBoardState(copyBoardState);
+            setPlayers(copyPlayers);
+
+            // Reiniciar el estado
+            setThrowing(TOTAL_THROWING);
+            setDieSate(EDiceState.HIDE);
+            setDiceValues(getInitialDiceValues());
+            setItemSelected(INITIAL_ITEM_SELECTED);
+            setGamerOver(isGameOver);
+
+            if (!isGameOver && typeGame !== ETypeGame.SOLO) {
+                const newTurn: TotalPlayers = turn === 1 ? 2 : 1;
+                setTurn(newTurn);
+
+                if (typeGame === ETypeGame.FRIEND) {
+                    console.log("El siguiente turno", `Player ${newTurn}`);
+                }
+            }
+
+        }
+
     };
 
     /**
@@ -134,13 +165,14 @@ const Game = ({typeGame = ETypeGame.FRIEND, initialTurn=1}: GameProps) => {
     * y además que sea el turno dos
     */
     const blockContent =
-    (typeGame === ETypeGame.BOT || typeGame === ETypeGame.ONLINE) && turn === 2;
+    !gamerOver && (typeGame === ETypeGame.BOT || typeGame === ETypeGame.ONLINE) && turn === 2;
 
     /**
     * Bloquea el botón que lanza los dados
     */
     const disabledRoll = 
     blockContent || 
+    gamerOver ||
     dieState === EDiceState.SPIN || 
     throwing <= 0 ||
     totalDiceAvailable(diceValues) === 0;
@@ -159,7 +191,7 @@ const Game = ({typeGame = ETypeGame.FRIEND, initialTurn=1}: GameProps) => {
     * Si los dados están visibles
     * Además que sea el turno 1 o que sea de tipo jugar con amigo
     */
-    const showPlay =dieState !== EDiceState.HIDE && turnsEnabledTwoPlayers;
+    const showPlay = !gamerOver && dieState !== EDiceState.HIDE && turnsEnabledTwoPlayers;
 
     /**
    * Sólo será blanco para dos juagdores si s esta jugando con un amigo
@@ -177,12 +209,13 @@ const Game = ({typeGame = ETypeGame.FRIEND, initialTurn=1}: GameProps) => {
 
     return (
         <GameWrapper blockContent={blockContent}>
-            <Header countdown={countdown} players={players} turn={initialTurn}/>
+            {gamerOver && <ScoreGame players={players}/>}
+            <Header countdown={countdown} players={players} turn={turn}/>
             <Board
                 items={boardState}
                 players={players}  
                 thrownDice={thrownDice}
-                turn={1}
+                turn={turn}
                 typeGame={typeGame}
                 handleClick={handleClickBoard} 
             />
