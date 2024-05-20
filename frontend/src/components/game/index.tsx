@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { BoardItem } from "./components/board/components";
 import { DiceState, DiceTheme, IBoardItem, ItemSelectedBoard, TotalPlayers, TypeButtonGame, type TypeGame, type valueDice } from "../../interfaces";
-import {Board, Buttons, Dices, GameWrapper, Header, ScoreGame} from "./components";
+import {Board, Buttons, Dices, GameMessages, GameWrapper, Header, ScoreGame} from "./components";
 import { calculateBoardValues, calculateScore, deselectBoardItemBoard, getInitalBoardState, getInitialDiceValues, getInitialPlayers, rollDice, selectDice, selectItemBoard, totalDiceAvailable } from './helpers';
 import { EDiceState, EDiceTheme, ETypeButtonGame, ETypeGame, INITIAL_ITEM_SELECTED, TOTAL_THROWING } from '../../utils/constants';
 import board from "./components/board";
@@ -11,7 +11,7 @@ interface GameProps {
     initialTurn?: TotalPlayers;
 }
 
-const Game = ({typeGame = ETypeGame.FRIEND, initialTurn=1}: GameProps) => {
+const Game = ({typeGame = ETypeGame.BOT, initialTurn=1}: GameProps) => {
 
     //Guarda el estado del boars
     const [boardState, setBoardState] = useState(getInitalBoardState);
@@ -41,6 +41,12 @@ const Game = ({typeGame = ETypeGame.FRIEND, initialTurn=1}: GameProps) => {
     // Estado para saber si el juego ha terminado
     const [gamerOver, setGamerOver] = useState(false);
 
+    const [message, setMessage] = useState({
+        isYatzy: false,
+        value: typeGame === ETypeGame.FRIEND ? `Player ${turn}` : "",
+        counter: typeGame === ETypeGame.FRIEND ? 1 : 0,
+    });
+
     /**
     * Evento que se ejecuta una vez ha terminado de girar los dados
     */
@@ -54,9 +60,13 @@ const Game = ({typeGame = ETypeGame.FRIEND, initialTurn=1}: GameProps) => {
         setDieSate(EDiceState.STOPPED);
         setItemSelected(INITIAL_ITEM_SELECTED);
 
-        //TODO: Mostrar mensaje se ha obtenido un yatzy
+        //Mensaje si es yatzy
         if (newIsYatzy) {
-            console.log("Has obtenido un yatzy");
+            setMessage((prev) => ({
+                isYatzy: true,
+                value: `Yatzy`,
+                counter: prev.counter + 1,
+            }));
         }
     };
 
@@ -109,8 +119,14 @@ const Game = ({typeGame = ETypeGame.FRIEND, initialTurn=1}: GameProps) => {
                 const newTurn: TotalPlayers = turn === 1 ? 2 : 1;
                 setTurn(newTurn);
 
+                //Al cambiar de turno y es vs friend
+                //en el mismo dispositivo, se muestra el mensaje
                 if (typeGame === ETypeGame.FRIEND) {
-                    console.log("El siguiente turno", `Player ${newTurn}`);
+                    setMessage((prev) => ({
+                        isYatzy: false,
+                        value: `Player ${newTurn}`,
+                        counter: prev.counter + 1,
+                    }));
                 }
             }
 
@@ -119,7 +135,7 @@ const Game = ({typeGame = ETypeGame.FRIEND, initialTurn=1}: GameProps) => {
     };
 
     /**
-   * Evento para la selección de un elemento en el board...
+   * Evento para la selección de un elemento en el board
    * @param item
    * @param player
    */
@@ -210,6 +226,7 @@ const Game = ({typeGame = ETypeGame.FRIEND, initialTurn=1}: GameProps) => {
     return (
         <GameWrapper blockContent={blockContent}>
             {gamerOver && <ScoreGame players={players}/>}
+            <GameMessages {...message}/>
             <Header countdown={countdown} players={players} turn={turn}/>
             <Board
                 items={boardState}

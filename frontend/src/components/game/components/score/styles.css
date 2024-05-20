@@ -10,7 +10,7 @@
   .score-game-wrapper {
     align-items: center;
     animation: fadeInLeft 300ms ease both;
-    background-color: var(--bg-bright-blue);
+    background-color: var(--principal);
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -45,15 +45,15 @@
     margin-bottom: 30px;
     padding: 10px 20px;
     text-align: center;
-    text-shadow: -2px 2px 3px var(--bg-blue3);
+    text-shadow: -2px 2px 3px var(--bg-dark-blue);
     visibility: hidden;
     width: 100%;
   }
   
   .score-game-buttons {
     align-items: center;
-    background-color: var(--bg-blue4);
-    box-shadow: inset 0px -5px 0px var(--bg-blue5);
+    background-color: var(--bg-deep-blue);
+    box-shadow: inset 0px -5px 0px var(--bg-blue7);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -85,10 +85,10 @@
   }
   
   .score-game-buttons-bottom button {
-    background-color: var(--bg-light-sky-blue);
+    background-color: var(--principal-strong);
     border-radius: 50%;
     border: none;
-    box-shadow: 0px 5px 0px var(--bg-light-blue3);
+    box-shadow: 0px 5px 0px var(--principal);
     cursor: pointer;
     height: 60px;
     padding: 10px;
@@ -108,5 +108,5 @@
   }
   
   .score-game-buttons-bottom svg {
-    filter: drop-shadow(0 2px 1px var(--bg-blue6));
+    filter: drop-shadow(0 2px 1px var(--principal));
   }

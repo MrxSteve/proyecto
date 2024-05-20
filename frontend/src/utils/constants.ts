@@ -92,10 +92,10 @@ export const LABELS_GAME = {
   BONUS: "Section Bonus",
   ROLL: "Roll",
   PLAY: "Play",
-  AMAZING_SCORE: "Amazing Score!",
-  TIE: "It's a tie!",
-  WON: "Congratulations! You Won!",
-  LOSE: "Too Bad! You lost this time",
+  AMAZING_SCORE: "Increible Puntaje :D!",
+  TIE: "Empate!",
+  WON: "Felicidades! Ganaste :D !",
+  LOSE: "Muy mal! Perdiste esta vez :(",
 };
 
 document.documentElement.style.setProperty("--base-height", `${BASE_HEIGHT}px`);
