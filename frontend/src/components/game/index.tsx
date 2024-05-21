@@ -1,17 +1,19 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { BoardItem } from "./components/board/components";
-import { DiceState, DiceTheme, IBoardItem, ItemSelectedBoard, TotalPlayers, TypeButtonGame, type TypeGame, type valueDice } from "../../interfaces";
+import { DiceState, DiceTheme, Difficulty, IBoardItem, ItemSelectedBoard, TotalPlayers, TypeButtonGame, type TypeGame, type valueDice } from "../../interfaces";
 import {Board, Buttons, Dices, GameMessages, GameWrapper, Header, ScoreGame} from "./components";
-import { calculateBoardValues, calculateScore, deselectBoardItemBoard, getInitalBoardState, getInitialDiceValues, getInitialPlayers, rollDice, selectDice, selectItemBoard, totalDiceAvailable } from './helpers';
-import { EDiceState, EDiceTheme, ETypeButtonGame, ETypeGame, INITIAL_ITEM_SELECTED, TOTAL_THROWING } from '../../utils/constants';
+import { calculateBoardValues, calculateScore, deselectBoardItemBoard, diceRandomSelectionBot, getInitalBoardState, getInitialDiceValues, getInitialPlayers, rollDice, selectDice, selectItemBoard, totalDiceAvailable, validateNextBotRoll } from './helpers';
+import { EDiceState, EDiceTheme, EDifficulty, ETypeButtonGame, ETypeGame, INITIAL_ITEM_SELECTED, TOTAL_THROWING } from '../../utils/constants';
 import board from "./components/board";
+import { delay } from "../../utils/helpers";
 
 interface GameProps {
     typeGame?: TypeGame;
     initialTurn?: TotalPlayers;
+    difficulty?: Difficulty;
 }
 
-const Game = ({typeGame = ETypeGame.BOT, initialTurn=1}: GameProps) => {
+const Game = ({difficulty = EDifficulty.HARD, typeGame = ETypeGame.BOT, initialTurn=1}: GameProps) => {
 
     //Guarda el estado del boars
     const [boardState, setBoardState] = useState(getInitalBoardState);
@@ -83,7 +85,7 @@ const Game = ({typeGame = ETypeGame.BOT, initialTurn=1}: GameProps) => {
     * y seleccionar el ítem del board
     * @param type
     */
-    const handleClickButtons = (type:TypeButtonGame) => {
+    const handleClickButtons = useCallback((type:TypeButtonGame) => {
         if (type === ETypeButtonGame.ROLL) {
 
             if (itemSelected.index >= 0) {
@@ -129,10 +131,8 @@ const Game = ({typeGame = ETypeGame.BOT, initialTurn=1}: GameProps) => {
                     }));
                 }
             }
-
         }
-
-    };
+    }, [boardState, diceValues, isYatzy, itemSelected, players, turn, typeGame]);
 
     /**
    * Evento para la selección de un elemento en el board
@@ -154,10 +154,86 @@ const Game = ({typeGame = ETypeGame.BOT, initialTurn=1}: GameProps) => {
     }
   };
 
+  /**
+   * Efecto que se ejecuta cuando giran los dados.
+   * Sólo para el bot
+   */
+  useEffect(() => {
+    const isBotTurn = typeGame === ETypeGame.BOT && turn === 2;
+
+    const runAsyncRollDice = async () => {
+      // Realiza la acción 1 segundo depsupés
+      // Para que no se ejecute de inmediato al cargar el componente
+      await delay(1000);
+      /**
+       * Se simula el lanzamiento del dado
+       * la función diceRandomSelectionBot, simula selecciones del dado,
+       * no lo hará para el primer lanzamiento
+       */
+      setDiceValues((value) =>
+        rollDice(diceRandomSelectionBot(value, throwing))
+      );
+      setDieSate(EDiceState.SPIN);
+      setThrowing((value) => value - 1);
+    };
+
+    // El turno inicial para el bot
+    // Además se valida que el juego no haya terminado aún
+    if (!gamerOver && isBotTurn && dieState === EDiceState.HIDE) {
+      runAsyncRollDice();
+    }
+
+    if (isBotTurn && dieState === EDiceState.STOPPED) {
+      const { rollAgain = false, itemSelected: newItemSelected } =
+        validateNextBotRoll(boardState, throwing, difficulty, isYatzy, turn);
+
+      if (rollAgain) {
+        runAsyncRollDice();
+      } else {
+        setItemSelected(newItemSelected);
+      }
+    }
+
+    // if (!gamerOver && dieState === EDiceState.SPIN) {
+    //   playSounds("dice");
+    // }
+  }, [
+    boardState,
+    dieState,
+    difficulty,
+    gamerOver,
+    isYatzy,
+    throwing,
+    turn,
+    typeGame,
+  ]);
+
+   /**
+   * Efecto que se ejcuta cuando se ha seleccionado un ítem del board
+   * ES aplicable para el bot y para el oponente en la jugabilidad online
+   */
+   useEffect(() => {
+    const isBotTurn = typeGame === ETypeGame.BOT && turn === 2;
+    const isOponentTurn = typeGame === ETypeGame.ONLINE && turn === 2;
+
+    const runAsyncPlayBot = async () => {
+      await delay(2000);
+      handleClickButtons(ETypeButtonGame.PLAY);
+    };
+
+    if ((isBotTurn || isOponentTurn) && itemSelected.index >= 0) {
+      if (isBotTurn) {
+        runAsyncPlayBot();
+      } else {
+        handleClickButtons(ETypeButtonGame.PLAY);
+      }
+    }
+  }, [handleClickButtons, itemSelected, turn, typeGame]);
+
 
     /**
     * Función que retorna cuando el contador de tiempo ha finalizado
-    * Sólo se ejecutará el tipo Online...
+    * Sólo se ejecutará el tipo Online
     * @param player
     */
     const onEndCountdown = (player: TotalPlayers) => {
