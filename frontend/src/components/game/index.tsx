@@ -6,6 +6,7 @@ import { calculateBoardValues, calculateScore, deselectBoardItemBoard, diceRando
 import { EDiceState, EDiceTheme, EDifficulty, ETypeButtonGame, ETypeGame, INITIAL_ITEM_SELECTED, TOTAL_THROWING } from '../../utils/constants';
 import board from "./components/board";
 import { delay } from "../../utils/helpers";
+import { playSounds } from "../../utils/sounds";
 
 interface GameProps {
     typeGame: TypeGame;
@@ -69,6 +70,7 @@ const Game = ({difficulty = EDifficulty.HARD, typeGame = ETypeGame.BOT, initialT
                 value: `Yatzy`,
                 counter: prev.counter + 1,
             }));
+            playSounds("yatzy");
         }
     };
 
@@ -77,6 +79,7 @@ const Game = ({difficulty = EDifficulty.HARD, typeGame = ETypeGame.BOT, initialT
     * @param index
     */
    const handleSelectDice = (index: number) => {
+    playSounds("click");
         setDiceValues(selectDice(diceValues, index));
     };
 
@@ -120,6 +123,14 @@ const Game = ({difficulty = EDifficulty.HARD, typeGame = ETypeGame.BOT, initialT
             setItemSelected(INITIAL_ITEM_SELECTED);
             setGamerOver(isGameOver);
 
+            //Sonido cuando hace click en play
+            playSounds("click");
+
+            //Sonido cuando acaba el juego
+            if (isGameOver) {
+              playSounds("yatzy");
+            }
+
             if (!isGameOver && typeGame !== ETypeGame.SOLO) {
                 const newTurn: TotalPlayers = turn === 1 ? 2 : 1;
                 setTurn(newTurn);
@@ -152,6 +163,7 @@ const Game = ({difficulty = EDifficulty.HARD, typeGame = ETypeGame.BOT, initialT
     );
 
     if (changeState) {
+      playSounds("click");
       setBoardState(copyBoardState);
       setItemSelected(newItemSelected);
     }
@@ -197,9 +209,9 @@ const Game = ({difficulty = EDifficulty.HARD, typeGame = ETypeGame.BOT, initialT
       }
     }
 
-    // if (!gamerOver && dieState === EDiceState.SPIN) {
-    //   playSounds("dice");
-    // }
+    if (!gamerOver && dieState === EDiceState.SPIN) {
+      playSounds("dice");
+    }
   }, [
     boardState,
     dieState,

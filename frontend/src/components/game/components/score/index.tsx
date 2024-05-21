@@ -6,13 +6,15 @@ import { ScoreValue } from "./components";
 import { LABELS_GAME } from "../../../../utils/constants";
 import Icon from "../icon";
 import FocusTrap from "focus-trap-react";
+import Share from "../../../share";
+import { useNavigate } from "react-router-dom";
 
 interface ScoreGameProps {
     players: Player[];
   }
   
   const ScoreGame = ({ players }: ScoreGameProps) => {
-    //const navigate = useNavigate();
+    const navigate = useNavigate();
     const [scoreCounter, setScoreCounter] = useState(0);
     const [showElements, setShowElements] = useState(false);
   
@@ -40,8 +42,8 @@ interface ScoreGameProps {
      * Para el mensaje que se comparte en la opción share...
      */
     const dataShare = {
-      title: "Yatzy ReactJS",
-      text: `I got a score of ${players[0].score} points in Yatzy ReactJS.`,
+      title: "React Dices",
+      text: `Obtuve este puntaje ${players[0].score} en React Dices!.`,
       url: window.location.origin,
     };
   
@@ -54,7 +56,7 @@ interface ScoreGameProps {
         <div className="score-game">
           <div className={`score-game-wrapper ${showElements ? "show" : ""}`}>
             {/* Se deja visible por defecto un botón, para que tenga el focus */}
-            <CircularButton onClick={() => console.log("Back")} />
+            <CircularButton onClick={() => navigate("/")} />
             <div className="score-game-value">
               {players.map(({ id, score, name }, key) => (
                 <ScoreValue
@@ -70,17 +72,19 @@ interface ScoreGameProps {
             <div className="score-game-buttons">
               <button
                 className="button orange score-game-buttons-play"
-                onClick={() => console.log("Play Again")}
+                onClick={() => navigate("/")}
               >
                 Play Again
               </button>
               <div className="score-game-buttons-bottom">
-                <button title="Return to lobby" onClick={() => console.log("Return lobby")}>
+                <button title="Return to lobby" onClick={() => navigate("/")}>
                   <Icon type="full-house" fill="white" />
                 </button>
+                <Share data={dataShare}>
                   <button title="Share">
                     <Icon type="share" fill="white" />
                   </button>
+                  </Share>
               </div>
             </div>
           </div>

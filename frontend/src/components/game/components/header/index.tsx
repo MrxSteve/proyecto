@@ -4,6 +4,7 @@ import CircularButton from "../../../circularButton";
 import type { HeaderCountdown, Player, TotalPlayers } from "../../../../interfaces";
 import { handleBack } from "./helpers";
 import { useNavigate } from "react-router-dom";
+import { useSounds } from "../../../../hooks";
 
 interface HeaderProps {
     countdown?: HeaderCountdown;
@@ -13,6 +14,7 @@ interface HeaderProps {
 
 const Header = (props: HeaderProps) => {
 
+    const {withSound, toggleSound} = useSounds();
     const navigate = useNavigate();
 
     return (
@@ -21,7 +23,9 @@ const Header = (props: HeaderProps) => {
                 handleBack((action) => action && navigate("/"));
             }}></CircularButton>
             <PlayersHeader {...props}/>
-            <CircularButton type="sound-on" onClick={() => console.log("sound-on")}></CircularButton>
+            <CircularButton 
+                type={withSound ? "sound-on" : "sound-off"}
+                onClick={toggleSound}></CircularButton>
         </HeaderWrapper>
     );
 };

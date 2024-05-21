@@ -1,23 +1,23 @@
-//import Game from './components/game';
+import "./utils/sounds";
 import { AppWrapper } from './components/wrappers';
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Loading from "./components/loading";
 
+const AboutPage = lazy(() => import("./pages/about"));
 const Lobby = lazy(() => import("./pages/lobby"));
 const GamePage = lazy(() => import("./pages/game"));
 
-//typeGame="FRIEND" initialTurn={1}
 const App = () => {
   return (
     <AppWrapper> 
       <Suspense fallback={<Loading/>}>
-        {/* <Game/>  */}
         <BrowserRouter>
           <Routes>
             <Route path="*" element={<Lobby />} />
             <Route path="/" index element={<Lobby />} />
             <Route path="/game/:type" index element={<GamePage />} />
+            <Route path="/about" index element={<AboutPage />} />
           </Routes>
         </BrowserRouter>
       </Suspense>
