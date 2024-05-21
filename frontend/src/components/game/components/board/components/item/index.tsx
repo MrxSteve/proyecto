@@ -8,7 +8,7 @@ import { EItemType } from "../../../../../../utils/constants";
 interface ItemProps {
     label?: string; //opcional
     size?: number; //opcional
-    type: ItemType; //requerido
+    type?: ItemType; //requerido?
     value: valueDice | CategoriesType; //requerido
 }
 

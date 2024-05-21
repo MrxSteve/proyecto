@@ -1,3 +1,5 @@
-import AppWrapper from "./appWrapper"
+import AppWrapper from "./appWrapper";
+import PageWrapper from "./pageWrapper";
+import ButtonGroup from "./buttonGroup";
 
-export {AppWrapper};
+export { AppWrapper, PageWrapper, ButtonGroup};

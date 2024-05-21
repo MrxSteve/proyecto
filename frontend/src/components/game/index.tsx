@@ -8,8 +8,8 @@ import board from "./components/board";
 import { delay } from "../../utils/helpers";
 
 interface GameProps {
-    typeGame?: TypeGame;
-    initialTurn?: TotalPlayers;
+    typeGame: TypeGame;
+    initialTurn: TotalPlayers;
     difficulty?: Difficulty;
 }
 
@@ -92,7 +92,10 @@ const Game = ({difficulty = EDifficulty.HARD, typeGame = ETypeGame.BOT, initialT
                 setBoardState((board) => deselectBoardItemBoard(board, itemSelected, turn));
             }
 
-            setDiceValues(() => rollDice(diceValues));
+            setDiceValues((values) => {
+                const newDiceValues = rollDice(values);
+                return newDiceValues;
+            });
             setDieSate(EDiceState.SPIN);
             setThrowing((value) => value - 1);
         }
@@ -132,7 +135,7 @@ const Game = ({difficulty = EDifficulty.HARD, typeGame = ETypeGame.BOT, initialT
                 }
             }
         }
-    }, [boardState, diceValues, isYatzy, itemSelected, players, turn, typeGame]);
+    }, [boardState, isYatzy, itemSelected, players, turn, typeGame]);
 
     /**
    * Evento para la selección de un elemento en el board
