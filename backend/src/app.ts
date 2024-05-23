@@ -1,3 +1,4 @@
+import apiRoute from "./routes";
 import compression from "compression";
 import express, {
     NextFunction,
@@ -27,6 +28,12 @@ app.use(express.json());
 // Para compresión de archivo gzip
 app.use(compression());
 app.use(express.json());
+
+/**
+ * Para agregar el router para el api
+*/
+app.use(apiRoute);
+
 
 /**
  * Captura los errores que puedan exitir

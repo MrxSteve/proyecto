@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const routes_1 = __importDefault(require("./routes"));
 const compression_1 = __importDefault(require("compression"));
 const express_1 = __importDefault(require("express"));
 const helmet_1 = __importDefault(require("helmet"));
@@ -18,6 +19,7 @@ app.use((0, compression_1.default)());
 app.use(express_1.default.json());
 app.use((0, compression_1.default)());
 app.use(express_1.default.json());
+app.use(routes_1.default);
 app.use((error, _, res, _2) => {
     res.status(500).json({ message: error.message });
 });
