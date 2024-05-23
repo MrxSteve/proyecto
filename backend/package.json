@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "build:dev": "tsc -w",
-    "start:dev": "node --watch build/app.js"
+    "start:dev": "node --watch build/app.js",
+    "build:ui" : "tsc && cd ../frontend && npm run build:public"
   },
   "keywords": [],
   "author": "",

@@ -14,11 +14,15 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const server = http.createServer(app);
 
-//archivos estaticos del juego
-app.use(express.static(path.join(__dirname, "public")));
+// Para servir los archivos estáticos del juego
+app.use(express.static(path.join(__dirname, "/public")));
 
 app.use(helmet());
 app.use(helmet.hidePoweredBy());
+
+// Para compresión de archivo gzip...
+app.use(compression());
+app.use(express.json());
 
 // Para compresión de archivo gzip
 app.use(compression());
@@ -32,7 +36,7 @@ app.use((error: Error, _: Request, res: Response, _2: NextFunction) => {
   });
 
   // Maneja los demás requests que no se ajusten a los rutas definidas
-app.get<RequestHandler>("*", (_, res) => {
+  app.get<RequestHandler>("*", (_, res) => {
     res.sendFile(path.join(__dirname + "/public/index.html"));
   });
 
