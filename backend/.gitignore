@@ -1,5 +1,5 @@
 # dependencies
 /node_modules
 
-# dotev environment variables file
+# dotenv environment variables file
 .env

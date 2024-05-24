@@ -9,6 +9,7 @@ const express_1 = __importDefault(require("express"));
 const helmet_1 = __importDefault(require("helmet"));
 const http_1 = __importDefault(require("http"));
 const path_1 = __importDefault(require("path"));
+const mongo_1 = __importDefault(require("./db/mongo"));
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 3000;
 const server = http_1.default.createServer(app);
@@ -26,6 +27,12 @@ app.use((error, _, res, _2) => {
 app.get("*", (_, res) => {
     res.sendFile(path_1.default.join(__dirname + "/public/index.html"));
 });
-server.listen(PORT, () => {
-    console.log(`Server started on port ${PORT}`);
+(0, mongo_1.default)((error) => {
+    if (!error) {
+        console.log("MongoDB connected successfully!");
+        return server.listen(PORT, () => {
+            console.log(`Server started on port ${PORT}`);
+        });
+    }
+    console.error("MongoDB connection error:", error);
 });
