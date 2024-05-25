@@ -10,7 +10,10 @@ import helmet from "helmet";
 import http from "http";
 import path from "path";
 import connectDB from "./db/mongo";
-// import session from "express-session";
+import redisStore from "./db/redis";
+import session from "express-session";
+import cookieParser from "cookie-parser";
+import CONFIG from "./config";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -27,9 +30,30 @@ app.use(express.static(path.join(__dirname, "/public")));
 app.use(helmet());
 app.use(helmet.hidePoweredBy());
 
-// Para compresión de archivo gzip...
+// Para compresión de archivo gzip
 app.use(compression());
 app.use(express.json());
+
+
+//Estable que si se esta ejecutando en produccion al estar en true habilitara las propiedades 
+//de secure y httOnly, indicando que solo se transfier cookies por una navegacion segura (https)
+const isProduction = process.env.NODE_ENV === "production";
+
+
+/**
+ * Para la creacion de la sesion
+ */
+app.use(cookieParser());
+app.use(session({
+  secret: CONFIG.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  store: redisStore,
+  cookie: {
+    secure: isProduction,
+    httpOnly: isProduction,
+    maxAge: new Date(Date.now() + 5184000000).getTime(),
+},}));
 
 // Para compresión de archivo gzip
 app.use(compression());
@@ -71,4 +95,3 @@ connectDB((error) => {
   console.error("MongoDB connection error:", error);
 });
 
-  
