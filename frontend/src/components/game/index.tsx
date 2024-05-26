@@ -3,10 +3,11 @@ import { BoardItem } from "./components/board/components";
 import { DiceState, DiceTheme, Difficulty, IBoardItem, ItemSelectedBoard, TotalPlayers, TypeButtonGame, type TypeGame, type valueDice } from "../../interfaces";
 import {Board, Buttons, Dices, GameMessages, GameWrapper, Header, ScoreGame} from "./components";
 import { calculateBoardValues, calculateScore, deselectBoardItemBoard, diceRandomSelectionBot, getInitalBoardState, getInitialDiceValues, getInitialPlayers, rollDice, selectDice, selectItemBoard, totalDiceAvailable, validateNextBotRoll } from './helpers';
-import { EDiceState, EDiceTheme, EDifficulty, ETypeButtonGame, ETypeGame, INITIAL_ITEM_SELECTED, TOTAL_THROWING } from '../../utils/constants';
+
 import board from "./components/board";
 import { delay } from "../../utils/helpers";
 import { playSounds } from "../../utils/sounds";
+import { EDiceState, EDiceTheme, EDifficulty, ETypeButtonGame, ETypeGame, INITIAL_ITEM_SELECTED, TOTAL_THROWING } from "../../utils/constants";
 
 interface GameProps {
     typeGame: TypeGame;

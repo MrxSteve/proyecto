@@ -1,5 +1,6 @@
 import "./styles.css";
-import { useWindowResize } from "../../../hooks";
+import { useWindowResize, useFetch } from "../../../hooks";
+import React from 'react';
 
 // elementos del contenedor un elemento o multiples
 const AppWrapper = ({
@@ -8,6 +9,7 @@ const AppWrapper = ({
     children: JSX.Element | JSX.Element[];
 }) => {
     useWindowResize();
+    const { data, loading } = useFetch("/api/me");
 
     return (
     <div className="container">
@@ -16,4 +18,4 @@ const AppWrapper = ({
     );
 }
 
-export default AppWrapper;
+export default React.memo(AppWrapper);
