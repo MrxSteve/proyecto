@@ -14,6 +14,10 @@ import redisStore from "./db/redis";
 import session from "express-session";
 import cookieParser from "cookie-parser";
 import CONFIG from "./config";
+import passport from "passport";
+import passportController from "./controllers/passport";
+
+passportController();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -55,9 +59,21 @@ app.use(session({
     maxAge: new Date(Date.now() + 5184000000).getTime(),
 },}));
 
-// Para compresión de archivo gzip
-app.use(compression());
-app.use(express.json());
+/**
+ Se relaciona passport con express
+ */
+ app.use(passport.initialize());
+ app.use(passport.session());
+ 
+ /**
+  * Se agrega el usaurio al request
+  */
+ app.use((req, res, next) => {
+   res.locals.user = req.user || null;
+   next();
+ });
+
+
 
 /**
  * Para agregar el router para el api
