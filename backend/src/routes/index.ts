@@ -1,9 +1,27 @@
-import { RequestHandler, Router } from "express";
+import { Request, Response, NextFunction, RequestHandler, Router } from "express";
 //import User from "../models/user";
 import PASSPORT_STRATEGIES, {Strategies} from "../controllers/passport/strategies";
 import passport from "passport";
+import CONFIG from "../config";
+
 
 const router = Router();
+
+/**
+ * Middleware que valida si el usuario ya está autenticado
+ * @param req
+ * @param res
+ * @param next
+ * @returns
+ */
+const isLoggedIn = (req: Request, res: Response, next: NextFunction) => {
+  if (req.isAuthenticated()) {
+    return res.redirect("/");
+  }
+
+  next();
+};
+
 
 const urlRedirect = {
     successRedirect: "/api/successlogin",
@@ -26,6 +44,18 @@ router.get<RequestHandler>("/api/successlogin", (req, res) => {
  */
 router.get<RequestHandler>("/api/me", (req, res) => {
 
+
+    /**
+   * Se obtienen los datos de las estrategías de auteticación configuradas
+   * y que estén habilitadas
+   */
+  const authOptions = Object.keys(PASSPORT_STRATEGIES)
+  .filter((v) => PASSPORT_STRATEGIES[v as Strategies].isEnabled)
+  .map((v) => {
+    const { socialName, routerURL } = PASSPORT_STRATEGIES[v as Strategies];
+    return { socialName, routerURL };
+  });  
+
     /**
      * Si esta autentificado se obtiene la data del usuario y se envia al cliente
      */
@@ -34,12 +64,14 @@ router.get<RequestHandler>("/api/me", (req, res) => {
 
         return res.json({
             isAuth: true,
+            authOptions,
+            roomRange: CONFIG.ROOM_SIZE_RANGE,
             user: {name, id: _id, photo},
         });
     }
 
     // se ejecuta si el usuario no esta autentificado
-    res.json({ isAuth: false }); // user
+    res.json({ isAuth: false, authOptions, roomRange: CONFIG.ROOM_SIZE_RANGE }); // user
 });
 
 /**
@@ -67,7 +99,7 @@ Object.keys(PASSPORT_STRATEGIES).forEach((strategy) => {
     if (isEnabled) {
         //.log({ routerURL, callbackURL, socialName });
       // Para la url que inicia el proceso de aitenticación con el servicio
-      router.get(routerURL, passport.authenticate(socialName, scope));
+      router.get(routerURL, isLoggedIn, passport.authenticate(socialName, scope));
   
       // Ruta a la cual responde el servicio una vez se ha realizado la autenticación
       router.get(callbackURL, passport.authenticate(socialName, urlRedirect));
