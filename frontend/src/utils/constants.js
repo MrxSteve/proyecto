@@ -37,6 +37,17 @@ var ETypeGame;
     ETypeGame["FRIEND"] = "FRIEND";
     ETypeGame["BOT"] = "BOT";
 })(ETypeGame || (exports.ETypeGame = ETypeGame = {}));
+var EDiceState;
+(function (EDiceState) {
+    EDiceState["HIDE"] = "HIDE";
+    EDiceState["SPIN"] = "SPIN";
+    EDiceState["STOPPED"] = "STOPPED";
+  })(EDiceState || (exports.EDiceState = EDiceState = {}));
+var ETypeButtonGame;
+(function (ETypeButtonGame) {
+    ETypeButtonGame["ROLL"] = "ROLL";
+    ETypeButtonGame["PLAY"] = "PLAY";
+  })(ETypeButtonGame || (exports.ETypeButtonGame = ETypeButtonGame = {}));
 var EItemType;
 (function (EItemType) {
     EItemType["UPPER_SECTION"] = "UPPER_SECTION";
