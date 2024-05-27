@@ -7,6 +7,7 @@ import Loading from "./components/loading";
 const AboutPage = lazy(() => import("./pages/about"));
 const Lobby = lazy(() => import("./pages/lobby"));
 const GamePage = lazy(() => import("./pages/game"));
+const Online = lazy(() => import("./pages/online"));
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
             <Route path="/" index element={<Lobby />} />
             <Route path="/game/:type" index element={<GamePage />} />
             <Route path="/about" index element={<AboutPage />} />
+            <Route path="/online" index element={<Online />} />
           </Routes>
         </BrowserRouter>
       </Suspense>
