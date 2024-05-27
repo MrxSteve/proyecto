@@ -8,6 +8,7 @@ import CircularButton from "../circularButton";
 import { useSounds } from "../../hooks";
 import UserContext from "../../provider/userContext";
 import AvatarImage from "../avatarImage";
+import state from 'sweetalert/typings/modules/state';
 
 const LobbyGame = () => {
 
@@ -30,7 +31,7 @@ const LobbyGame = () => {
                 onClick={toggleSound}
                 />
                 <Logo/>
-                <Links/>
+                <Links state={state} />
                 <Options isAuth={state?.isAuth ?? false}/>
             </div>
         </PageWrapper>

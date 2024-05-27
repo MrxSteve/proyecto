@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { BoardItem } from "./components/board/components";
-import { DiceState, DiceTheme, Difficulty, IBoardItem, ItemSelectedBoard, TotalPlayers, TypeButtonGame, type TypeGame, type valueDice } from "../../interfaces";
+import { DiceState, DiceTheme, Difficulty, IBoardItem, ItemSelectedBoard, Player, TotalPlayers, TypeButtonGame, type TypeGame, type valueDice } from "../../interfaces";
 import {Board, Buttons, Dices, GameMessages, GameWrapper, Header, ScoreGame} from "./components";
 import { calculateBoardValues, calculateScore, deselectBoardItemBoard, diceRandomSelectionBot, getInitalBoardState, getInitialDiceValues, getInitialPlayers, rollDice, selectDice, selectItemBoard, totalDiceAvailable, validateNextBotRoll } from './helpers';
 
@@ -10,18 +10,23 @@ import { playSounds } from "../../utils/sounds";
 import { EDiceState, EDiceTheme, EDifficulty, ETypeButtonGame, ETypeGame, INITIAL_ITEM_SELECTED, TOTAL_THROWING } from "../../utils/constants";
 
 interface GameProps {
+    authUser: Partial<Player>;
     typeGame: TypeGame;
     initialTurn: TotalPlayers;
     difficulty?: Difficulty;
 }
 
-const Game = ({difficulty = EDifficulty.HARD, typeGame = ETypeGame.BOT, initialTurn=1}: GameProps) => {
+const Game = ({
+  authUser = {}, 
+  difficulty = EDifficulty.HARD, 
+  typeGame = ETypeGame.BOT, initialTurn=1
+}: GameProps) => {
 
     //Guarda el estado del boars
     const [boardState, setBoardState] = useState(getInitalBoardState);
 
     // Estado de los jugadores (maximo seran dos)
-    const [players, setPlayers] = useState(()=> getInitialPlayers(typeGame));
+    const [players, setPlayers] = useState(()=> getInitialPlayers(typeGame, authUser));
 
     //Para el turno
     const [turn, setTurn] = useState<TotalPlayers>(typeGame !== ETypeGame.SOLO ? initialTurn: 1);
