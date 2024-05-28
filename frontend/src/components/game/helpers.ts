@@ -231,7 +231,7 @@ const getScoreSectionBot = (
  * @returns
  */
 export const getInitalBoardState = () => {
-    // La base del score...
+    // La base del score
     const initialScore: IScore = {
       value: 0,
       temporal: 0,

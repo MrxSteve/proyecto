@@ -108,14 +108,28 @@ const Game = ({
     const handleClickButtons = useCallback((type:TypeButtonGame) => {
         if (type === ETypeButtonGame.ROLL) {
 
+            // dejar el board sin opciones seleccionadas
+            // solo si habia una seleccionada
             if (itemSelected.index >= 0) {
                 setBoardState((board) => deselectBoardItemBoard(board, itemSelected, turn));
             }
 
             setDiceValues((values) => {
                 const newDiceValues = rollDice(values);
+
+                // Se emite un socket si está en la jugabilidad online
+                if (typeGame === ETypeGame.ONLINE) {
+                  socket?.emit("ACTIONS", {
+                    room,
+                    diceValues: newDiceValues,
+                    type: ETypeButtonGame.ROLL,
+                  } as OnlineRollDice);
+                }
+
                 return newDiceValues;
-            });
+              });
+
+
             setDieSate(EDiceState.SPIN);
             setThrowing((value) => value - 1);
         }
@@ -148,6 +162,18 @@ const Game = ({
               playSounds("yatzy");
             }
 
+            // Se emite el valor que se ha seleccionado
+            // Sólo aplica si es el turno del jugador uno, que será el actual
+            // Además emite isGameOver para eliminar la sala, sólo lo hará un jugador
+            if (turn === 1 && typeGame === ETypeGame.ONLINE) {
+              socket?.emit("ACTIONS", {
+                room,
+                itemSelected,
+                isGameOver,
+                type: ETypeButtonGame.PLAY,
+              } as OnlinePlay);
+            }
+
             if (!isGameOver && typeGame !== ETypeGame.SOLO) {
                 const newTurn: TotalPlayers = turn === 1 ? 2 : 1;
                 setTurn(newTurn);
@@ -163,7 +189,7 @@ const Game = ({
                 }
             }
         }
-    }, [boardState, isYatzy, itemSelected, players, turn, typeGame]);
+    }, [boardState, isYatzy, itemSelected, players, room, socket, turn, typeGame]);
 
     /**
    * Evento para la selección de un elemento en el board
@@ -282,11 +308,11 @@ const Game = ({
       });
 
       /**
-       * Evento que se ejecuta cuando el oponente ha girando los dados...
+       * Evento que se ejecuta cuando el oponente ha girando los dados
        */
       socket.on(ETypeButtonGame.ROLL, (data: OnlineRollDice) => {
         // Sólo es aplicable para el oponente no para el usuario actual
-        // Establece el valor de los dados que llega...
+        // Establece el valor de los dados que llega
         setDiceValues(data.diceValues);
         setDieSate(EDiceState.SPIN);
         setThrowing((value) => value - 1);

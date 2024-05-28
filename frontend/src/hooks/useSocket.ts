@@ -52,10 +52,6 @@ const useSocket = (connectionData: IUseSocket) => {
        });
      });
 
-    //prueba
-    socket.on("connect_error", (error) => {
-        console.log("error");
-      });
 
     socket.on("connect", () => {
       /**
@@ -77,8 +73,8 @@ const useSocket = (connectionData: IUseSocket) => {
           // se muestra el mensaje y se hace una recarga de la página
           // para así actualizar la información en el cliente
           const text = {
-            Authenticated: "You are already authenticated",
-            Unauthenticated: "You are not authenticated",
+            Authenticated: "Ya estas autentificado",
+            Unauthenticated: "No estas autentificado",
           };
 
           swal({

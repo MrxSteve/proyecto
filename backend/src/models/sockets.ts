@@ -215,9 +215,9 @@ const startSocketServer = (
           const playersMatch = await getDataFromRedis();
 
           if (playersMatch[data.room]) {
-            // Elimina la sala...
+            // Elimina la sala
             delete playersMatch[data.room];
-            // Actualiza la información en redis...
+            // Actualiza la información en redis
             setDataRedis(playersMatch);
           }
         }
