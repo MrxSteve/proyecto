@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import type { IAuth, TypeRoom } from "../../interfaces";
-import { ConnectedOpponent, OnlineOptions } from "./components";
+import { ConnectedOpponent, OnlineOptions, PlayWithFriend } from "./components";
 
 interface GameOnlineProps {
   state: IAuth;
@@ -37,14 +37,14 @@ const GameOnline = ({ state, roomURL = "" }: GameOnlineProps) => {
     );
   }
 
-//   if (typeRoom === "FRIEND" && !dataRoom.room) {
-//     return (
-//       <PlayWithFriend
-//         state={state}
-//         handleNewRoom={(newDataRoom) => setDataRoom(newDataRoom)}
-//       />
-//     );
-//   }
+   if (typeRoom === "FRIEND" && !dataRoom.room) {
+     return (
+        <PlayWithFriend
+          state={state}
+          handleNewRoom={(newDataRoom) => setDataRoom(newDataRoom)}
+        />
+     );
+   }
 
   const extPros = { state, typeRoom, ...dataRoom };
 

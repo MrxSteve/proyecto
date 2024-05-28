@@ -61,7 +61,7 @@ const startSocketServer = (server, sessionMiddleware) => {
                     const turn = (0, helpers_1.randomNumber)(1, 2);
                     const opponent = playersMatch[joinRoom].players[0];
                     if (opponent.id === user.id) {
-                        return cb?.("You can't play yourself");
+                        return cb?.("No puedes jugar vs tu mismo");
                     }
                     const players = [opponent, { ...user, socketID: socket.id }];
                     const dataSocket = {
@@ -76,7 +76,7 @@ const startSocketServer = (server, sessionMiddleware) => {
                     return io.sockets.in(joinRoom).emit("NEW_OPPONENT", dataSocket);
                 }
                 else {
-                    return cb?.("The room no longer exists");
+                    return cb?.("Esta sala no existe");
                 }
             }
             const room = typeRoom === "ONLINE" ? (0, helpers_1.guid)() : customRoom;

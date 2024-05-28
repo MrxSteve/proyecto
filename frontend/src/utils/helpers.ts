@@ -40,7 +40,7 @@ export const copyToClipboard = (text: string = "") => {
 };
 
 /**
- * Si se encuentra en el ambiente de desarrollo...
+ * Si se encuentra en el ambiente de desarrollo
  * @returns
  */
 export const isDev = () => process.env.NODE_ENV === "development";

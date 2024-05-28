@@ -134,20 +134,20 @@ const startSocketServer = (
 
         if (joinRoom !== "") {
           if (playersMatch[joinRoom]) {
-            // Se indica el turno inicial del juego...
+            // Se indica el turno inicial del juego
             const turn = randomNumber(1, 2);
 
-            // Se extrae la información del oponente...
+            // Se extrae la información del oponente
             const opponent = playersMatch[joinRoom].players[0];
 
-            // Se valida que el usuario no sea el mismo...
+            // Se valida que el usuario no sea el mi
             if (opponent.id === user.id) {
-              return cb?.("You can't play yourself");
+              return cb?.("No puedes jugar vs tu mismo");
             }
 
             /**
              * Se consolida los jugadores de la sala
-             * estos son enviados al cliente y son guardados en redis...
+             * estos son enviados al cliente y son guardados en redis
              */
             const players = [opponent, { ...user, socketID: socket.id }];
 
@@ -173,7 +173,7 @@ const startSocketServer = (
             // se pone return para terminar la ejecución de la función
             return io.sockets.in(joinRoom).emit("NEW_OPPONENT", dataSocket);
           } else {
-            return cb?.("The room no longer exists");
+            return cb?.("Esta sala no existe");
           }
         }
 
