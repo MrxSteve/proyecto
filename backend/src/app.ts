@@ -16,6 +16,8 @@ import cookieParser from "cookie-parser";
 import CONFIG from "./config";
 import passport from "passport";
 import passportController from "./controllers/passport";
+import { start } from "repl";
+import startSocketServer from "./models/sockets";
 
 passportController();
 
@@ -45,10 +47,11 @@ const isProduction = process.env.NODE_ENV === "production";
 
 
 /**
- * Para la creacion de la sesion
+ * Para la creación de la sesión...
  */
 app.use(cookieParser());
-app.use(session({
+
+const sessionMiddleware = session({
   secret: CONFIG.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
@@ -57,7 +60,10 @@ app.use(session({
     secure: isProduction,
     httpOnly: isProduction,
     maxAge: new Date(Date.now() + 5184000000).getTime(),
-},}));
+  },
+});
+
+app.use(sessionMiddleware);
 
 /**
  Se relaciona passport con express
@@ -101,6 +107,9 @@ connectDB((error) => {
   // La conexión a mongo fue exitosa
   if (!error) {
     console.log("MongoDB connected successfully!");
+
+    // Se configura los sockets...
+    startSocketServer(server, sessionMiddleware);
 
     // Se sube el server
     return server.listen(PORT, () => {

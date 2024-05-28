@@ -4,36 +4,38 @@ import React, { useContext, useEffect, useState } from "react";
 import type { IAuthOptions } from "../interfaces";
 import UserContext from "../provider/userContext";
 import SocialAuth from "../components/socialAuth";
+import { isAValidRoom } from "../utils/helpers";
+import GameOnline from "../components/gameOnline";
 
 const Online = () => {
   const state = useContext(UserContext);
-  // Se obtiene el rango de la sala personalizada a crear...
+  // Se obtiene el rango de la sala personalizada a crear
   const { roomRange = ROOM_SIZE_RANGE_BASE } = state || {};
-  // Para el estado de los query string en la url...
+  // Para el estado de los query string en la url
   const [searchParams, setSearchParams] = useSearchParams();
-  // Estado que guardaría el valor de la sala que viene por la url...
+  // Estado que guardaría el valor de la sala que viene por la url
   const [roomURL, setRoomURL] = useState("");
 
   /**
    * Efecto que extrae el valor del query string de la url
    * Además lo elimina para evitar que cuando recargue la página
-   * Lo vuelva a tomar...
+   * Lo vuelva a tomar
    */
   useEffect(() => {
-    // El valor existe en la url...
+    // El valor existe en la url
     if (searchParams.has("room")) {
       const roomValue = searchParams.get("room") || "";
       // Se elimina el valor de la URL
       searchParams.delete("room");
-      // Se establece el nuevo valor...
+      // Se establece el nuevo valor
       setSearchParams(searchParams);
 
-    //   if (
-    //     isAValidRoom(roomValue, roomRange) &&
-    //     roomValue.length === roomRange
-    //   ) {
-    //     setRoomURL(roomValue);
-    //   }
+    if (
+         isAValidRoom(roomValue, roomRange) &&
+         roomValue.length === roomRange
+       ) {
+         setRoomURL(roomValue);
+       }
     }
   }, [roomRange, searchParams, setSearchParams]);
 
@@ -46,9 +48,9 @@ const Online = () => {
   }
 
   /**
-   * Muestra el componente para jubabilidad online...
+   * Muestra el componente para jubabilidad online
    */
-  return <div>.</div>//<GameOnline state={state} roomURL={roomURL} />;
+  return <GameOnline state={state} roomURL={roomURL} />;
 };
 
 export default React.memo(Online);

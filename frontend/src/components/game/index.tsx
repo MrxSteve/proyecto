@@ -1,32 +1,43 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { BoardItem } from "./components/board/components";
-import { DiceState, DiceTheme, Difficulty, IBoardItem, ItemSelectedBoard, Player, TotalPlayers, TypeButtonGame, type TypeGame, type valueDice } from "../../interfaces";
+import { DiceState, DiceTheme, Difficulty, IBoardItem, ItemSelectedBoard, OnlinePlay, OnlineRollDice, Player, TotalPlayers, TypeButtonGame, type TypeGame, type valueDice } from "../../interfaces";
 import {Board, Buttons, Dices, GameMessages, GameWrapper, Header, ScoreGame} from "./components";
 import { calculateBoardValues, calculateScore, deselectBoardItemBoard, diceRandomSelectionBot, getInitalBoardState, getInitialDiceValues, getInitialPlayers, rollDice, selectDice, selectItemBoard, totalDiceAvailable, validateNextBotRoll } from './helpers';
-
 import board from "./components/board";
 import { delay } from "../../utils/helpers";
 import { playSounds } from "../../utils/sounds";
 import { EDiceState, EDiceTheme, EDifficulty, ETypeButtonGame, ETypeGame, INITIAL_ITEM_SELECTED, TOTAL_THROWING } from "../../utils/constants";
+import { Socket } from "socket.io-client";
+import { useShowMessageRedirect } from "../../hooks";
 
 interface GameProps {
-    authUser: Partial<Player>;
-    typeGame: TypeGame;
-    initialTurn: TotalPlayers;
-    difficulty?: Difficulty;
+  authUser: Partial<Player>;
+  difficulty?: Difficulty;
+  initialTurn: TotalPlayers;
+  opponent?: Partial<Player>;
+  room?: string;
+  socket?: Socket;
+  typeGame: TypeGame;
 }
 
 const Game = ({
-  authUser = {}, 
-  difficulty = EDifficulty.HARD, 
-  typeGame = ETypeGame.BOT, initialTurn=1
+  authUser = {},
+  difficulty = EDifficulty.EASY,
+  initialTurn = 2,
+  opponent = {},
+  room = "",
+  socket,
+  typeGame = ETypeGame.BOT,
 }: GameProps) => {
+
+    //muestra mensaje y redirecciona el usuario a un path especificado
+    const setRedirect = useShowMessageRedirect();
 
     //Guarda el estado del boars
     const [boardState, setBoardState] = useState(getInitalBoardState);
 
     // Estado de los jugadores (maximo seran dos)
-    const [players, setPlayers] = useState(()=> getInitialPlayers(typeGame, authUser));
+    const [players, setPlayers] = useState(()=> getInitialPlayers(typeGame, authUser, opponent));
 
     //Para el turno
     const [turn, setTurn] = useState<TotalPlayers>(typeGame !== ETypeGame.SOLO ? initialTurn: 1);
@@ -252,19 +263,70 @@ const Game = ({
   }, [handleClickButtons, itemSelected, turn, typeGame]);
 
 
+  /**
+   * Eefecto que ejecuta las acciones online del juego...
+   */
+  useEffect(() => {
+    if (socket) {
+      /**
+       * El oponente se ha desconectado...
+       */
+      socket.on("OPPONENT_LEAVE", () => {
+        setRedirect({
+          message: {
+            title: "Oponente desconectado 😭",
+            icon: "error",
+            timer: 5000,
+          },
+        });
+      });
+
+      /**
+       * Evento que se ejecuta cuando el oponente ha girando los dados...
+       */
+      socket.on(ETypeButtonGame.ROLL, (data: OnlineRollDice) => {
+        // Sólo es aplicable para el oponente no para el usuario actual
+        // Establece el valor de los dados que llega...
+        setDiceValues(data.diceValues);
+        setDieSate(EDiceState.SPIN);
+        setThrowing((value) => value - 1);
+      });
+
+      /**
+       * Evento que se ejecuta cuando se ha seleccionado un valor del board...
+       */
+      socket.on(ETypeButtonGame.PLAY, (data: OnlinePlay) => {
+        // Sólo es aplicable para el oponente no para el usuario actual
+        setItemSelected(data.itemSelected);
+      });
+    }
+  }, [setRedirect, socket]);
+
+
     /**
     * Función que retorna cuando el contador de tiempo ha finalizado
     * Sólo se ejecutará el tipo Online
     * @param player
     */
     const onEndCountdown = (player: TotalPlayers) => {
-        console.log({player});
+      if (player === 1) {
+        setRedirect({
+          message: {
+            title: "Se acabo el tiempo!",
+            icon: "info",
+            timer: 5000,
+          },
+        });
+      }
     };
 
     /**
      * Solo se agrega el cronometro cuando es online
      */
-    const countdown = typeGame === ETypeGame.ONLINE ? {stop: false, onEndCountdown}: undefined;
+    const countdown = 
+    typeGame === ETypeGame.ONLINE 
+    ? {stop: dieState === EDiceState.SPIN && !gamerOver, onEndCountdown}
+    : undefined;
 
     // Para saber si es el caso donde la interfaz de ambos lados
     // se habilita para cuando hay dos jugadores, en este caso, sólo

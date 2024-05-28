@@ -16,6 +16,7 @@ const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const config_1 = __importDefault(require("./config"));
 const passport_1 = __importDefault(require("passport"));
 const passport_2 = __importDefault(require("./controllers/passport"));
+const sockets_1 = __importDefault(require("./models/sockets"));
 (0, passport_2.default)();
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 3000;
@@ -27,7 +28,7 @@ app.use((0, compression_1.default)());
 app.use(express_1.default.json());
 const isProduction = process.env.NODE_ENV === "production";
 app.use((0, cookie_parser_1.default)());
-app.use((0, express_session_1.default)({
+const sessionMiddleware = (0, express_session_1.default)({
     secret: config_1.default.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
@@ -37,7 +38,8 @@ app.use((0, express_session_1.default)({
         httpOnly: isProduction,
         maxAge: new Date(Date.now() + 5184000000).getTime(),
     },
-}));
+});
+app.use(sessionMiddleware);
 app.use(passport_1.default.initialize());
 app.use(passport_1.default.session());
 app.use((req, res, next) => {
@@ -54,6 +56,7 @@ app.get("*", (_, res) => {
 (0, mongo_1.default)((error) => {
     if (!error) {
         console.log("MongoDB connected successfully!");
+        (0, sockets_1.default)(server, sessionMiddleware);
         return server.listen(PORT, () => {
             console.log(`Server started on port ${PORT}`);
         });
