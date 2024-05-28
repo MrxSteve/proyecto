@@ -47,6 +47,11 @@ registerRoute(
       return false;
     }
 
+    // Para excluir las rutas del API
+    if (url.pathname.includes("/api/")) {
+      return false;
+    }
+
     // Return true to signal that we want to use the handler.
     return true;
   },
