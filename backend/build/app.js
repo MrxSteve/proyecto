@@ -26,6 +26,7 @@ app.use((0, helmet_1.default)());
 app.use(helmet_1.default.hidePoweredBy());
 app.use((0, compression_1.default)());
 app.use(express_1.default.json());
+app.enable("trust proxy");
 const isProduction = process.env.NODE_ENV === "production";
 app.use((0, cookie_parser_1.default)());
 const sessionMiddleware = (0, express_session_1.default)({

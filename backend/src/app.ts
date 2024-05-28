@@ -39,6 +39,7 @@ app.use(helmet.hidePoweredBy());
 // Para compresión de archivo gzip
 app.use(compression());
 app.use(express.json());
+app.enable("trust proxy");
 
 
 //Estable que si se esta ejecutando en produccion al estar en true habilitara las propiedades 
