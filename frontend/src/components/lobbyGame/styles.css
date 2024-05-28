@@ -1,0 +1,23 @@
+.lobby-game {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 90%;
+  }
+  
+  .lobby-game .logo {
+    margin-bottom: 30px;
+  }
+  
+  .lobby-game .circular-button {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+  }
+  
+  .lobby-game .avatar-image {
+    left: 20px;
+    position: absolute;
+    top: 20px;
+  }

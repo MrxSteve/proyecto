@@ -10,9 +10,16 @@
     "@types/node": "^17.0.45",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.0",
+    "focus-trap-react": "^10.2.3",
+    "howler": "^2.2.4",
+    "lodash.clonedeep": "^4.5.0",
     "react": "^18.3.1",
+    "react-dice-complete": "^2.2.0",
     "react-dom": "^18.3.1",
+    "react-router-dom": "^6.23.1",
     "react-scripts": "5.0.1",
+    "socket.io-client": "^4.6.1",
+    "sweetalert": "^2.1.2",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4",
     "workbox-background-sync": "^6.6.0",
@@ -29,8 +36,9 @@
     "workbox-streams": "^6.6.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "cross-env PORT=3070 REACT_APP_API_PORT=3000 react-scripts start",
     "build": "react-scripts build",
+    "build:public": "set BUILD_PATH=../backend/build/public&& react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -51,5 +59,11 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "proxy": "http://localhost:3000",
+  "devDependencies": {
+    "@types/howler": "^2.2.11",
+    "@types/lodash.clonedeep": "^4.5.9",
+    "@types/sweetalert": "^2.0.4"
   }
 }

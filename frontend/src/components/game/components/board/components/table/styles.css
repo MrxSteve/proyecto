@@ -1,0 +1,21 @@
+.board-table-row-wrapper {
+    width: 100%;
+  }
+  
+  .board-table-row {
+    display: flex;
+    padding: 5px 10px;
+    width: 100%;
+  }
+  
+  .board-table-row:nth-child(odd) {
+    background-color: var(--principal-strong);
+  }
+  
+  .board-table-row:nth-child(even) {
+    background-color: var(--principal);
+  }
+  
+  .board-table-row-item {
+    width: 50%;
+  }
