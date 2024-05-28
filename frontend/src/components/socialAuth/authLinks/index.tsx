@@ -20,7 +20,7 @@ const AuthLinks = ({ authOptions }: AuthLinksProps) => (
           ))}
         {authOptions.length !== 0 && <h3>O</h3>}
         <Link to="/guest" className="button">
-          Invitado
+          Jugar online como invitado
         </Link>
       </div>
     </ButtonGroup>
