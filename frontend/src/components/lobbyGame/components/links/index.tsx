@@ -27,7 +27,7 @@ const LINKS = [
 const Links = ({state} : {state:IAuth | null}) => {
     return (
         <div className="lobby-game-links">
-            <ButtonGroup label="Play">
+            <ButtonGroup label="JUGAR">
             <div className="lobby-game-links-link">
                 {LINKS.map(({ label, path }, key) => {
                 // Valida si puede o no mostrar el link de online
