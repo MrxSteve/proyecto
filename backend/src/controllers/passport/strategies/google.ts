@@ -3,47 +3,17 @@ import CONFIG from "../../../config";
 import GoogleStrategy from "passport-google-oauth2";
 import type { CallbackAuth, DoneFunction } from "../../../interfaces";
 
-// Interface for Google configuration (assuming CONFIG.GOOGLE is an object)
-interface GoogleConfig {
-  KEY: string;
-  SECRET: string;
-}
+// Se deja por fuera para poderlo reusar en dos partes
+const callbackURL = "/api/auth/google/callback";
+const isEnabled = !!(CONFIG.GOOGLE.KEY && CONFIG.GOOGLE.SECRET);
 
-// Constants with types
-const callbackURL: string = "/api/auth/google/callback";
-const isEnabled: boolean = !!(CONFIG.GOOGLE?.KEY && CONFIG.GOOGLE?.SECRET); // Optional chaining
-
-// Function to generate unique IDs (no changes)
-const generateUniqueId = () => {
-  const generateUniqueId = () => {
-    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
-      const r = (Math.random() * 16) | 0,
-        v = c === "x" ? r : (r & 0x3) | 0x8;
-      return v.toString(16);
-    });
-  };
-};
-
-// Interface for social login configuration
-interface SocialLoginConfig {
-  isEnabled: boolean;
-  callbackURL: string;
-  routerURL: string;
-  socialName: string;
-  socialType: number;
-  fields: { [key: string]: string };
-  scope: { scope: string[] };
-  auth: (cb: CallbackAuth) => GoogleStrategy.Strategy;
-}
-
-// Social login configuration for Google
-const googleConfig: SocialLoginConfig = {
+export default {
   isEnabled,
   callbackURL,
   routerURL: "/api/auth/google",
   socialName: "google",
   socialType: 3,
-  fields: {
+  fileds: {
     name: "displayName",
     photo: "photos[0].value",
     token: "id",
@@ -53,26 +23,13 @@ const googleConfig: SocialLoginConfig = {
   auth(cb: CallbackAuth) {
     return new GoogleStrategy.Strategy(
       {
-        clientID: (CONFIG.GOOGLE as GoogleConfig).KEY, // Type assertion for Google config
-        clientSecret: (CONFIG.GOOGLE as GoogleConfig).SECRET,
+        clientID: CONFIG.GOOGLE.KEY,
+        clientSecret: CONFIG.GOOGLE.SECRET,
         callbackURL,
       },
       (_: string, _2: string, profile: Profile, done: DoneFunction) => {
-        const device_id = generateUniqueId();
-        const device_name = `device-${Math.floor(Math.random() * 10000)}`;
-
-        // Add device_id and device_name to the profile
-        const extendedProfile: Profile = {
-          ...profile,
-          device_id,
-          device_name,
-        };
-
-        // Call the done callback with the extended profile
-        done({ profile: extendedProfile });
+        cb({ profile, done });
       }
     );
   },
 };
-
-export default googleConfig;
