@@ -46,7 +46,7 @@ const AboutGame = () => {
         <ButtonGroup label="About">
           <p>
             <a
-              title="Yatzy"
+              title="licenciada velis"
               href="https://en.wikipedia.org/wiki/Yatzy"
               target="_blank"
               rel="noopener noreferrer"
