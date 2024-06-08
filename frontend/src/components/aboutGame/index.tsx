@@ -53,7 +53,7 @@ const AboutGame = () => {
             >
               Yatzy
             </a>{" "}
-            Es un juego de dados similar al Yacht y Yahtzee. 
+            Es un juego de dados similar al Yacht y Yahtzee. jhgfdfghgfddfghgfddfghgfds
             Está relacionado con el juego latinoamericano Generala 
             y el juego de dados de póquer inglés. 
             El Yatzy es más popular en los países nórdicos.
