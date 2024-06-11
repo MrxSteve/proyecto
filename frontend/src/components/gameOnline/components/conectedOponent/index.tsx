@@ -33,6 +33,7 @@ const ConnectedOpponent = ({
   }
 
   return (
+    
     <Suspense fallback={<Loading />}>
       <Game
         {...dataSocket}
